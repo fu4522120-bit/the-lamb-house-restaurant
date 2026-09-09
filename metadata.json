@@ -1,0 +1,6 @@
+{
+  "name": "The Lamb House",
+  "description": "Discover The Lamb House in Johar Town, Lahore — serving hearty Pakistani meat dishes including Mutton Afghani Pulao, Lamb Karahi, Chapli Kabab, Grilled Ribs and Shinwari.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
