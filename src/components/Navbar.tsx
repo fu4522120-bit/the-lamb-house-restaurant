@@ -21,8 +21,8 @@ export function Navbar({ onOpenAdmin, isAdminLoggedIn }: NavbarProps) {
   const navLinks = [
     { name: 'Home', href: '#home' },
     { name: 'About', href: '#about' },
-    { name: 'Signature Dishes', href: '#signature' },
     { name: 'Menu', href: '#menu' },
+    { name: 'Why Us', href: '#why-us' },
     { name: 'Atmosphere', href: '#atmosphere' },
     { name: 'Reviews', href: '#reviews' },
     { name: 'Gallery', href: '#gallery' },

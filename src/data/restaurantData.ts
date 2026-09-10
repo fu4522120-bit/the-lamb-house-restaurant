@@ -261,3 +261,21 @@ export const INITIAL_RESERVATIONS: Reservation[] = [
     createdAt: '2026-09-09T19:00:00.000Z',
   },
 ];
+
+export interface DishImagePreset {
+  label: string;
+  url: string;
+}
+
+export const DISH_IMAGE_PRESETS: DishImagePreset[] = [
+  { label: 'Royal Lamb Feast', url: '/images/luxury_lamb_feast.jpg' },
+  { label: 'Afghani Mutton Pulao', url: '/images/hero_afghani_pulao.jpg' },
+  { label: 'Lamb Karahi', url: '/images/lamb_karahi.jpg' },
+  { label: 'Chapli Kabab', url: '/images/chapli_kabab.jpg' },
+  { label: 'Grilled Lamb Ribs', url: '/images/grilled_ribs.jpg' },
+  { label: 'Shinwari Lamb', url: '/images/shinwari_dish.jpg' },
+  { label: 'Mutton Tikka Boti', url: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=85' },
+  { label: 'Charcoal BBQ Platter', url: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=1200&q=85' },
+  { label: 'Tandoori Roti & Naan', url: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=85' },
+];
+

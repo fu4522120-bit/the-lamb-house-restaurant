@@ -34,7 +34,7 @@ export function Footer({ onOpenAdmin }: FooterProps) {
               Explore
             </h4>
             <ul className="space-y-2">
-              {['Home', 'About', 'Signature Dishes', 'Menu', 'Atmosphere', 'Reviews', 'Gallery', 'Reservation', 'Contact'].map((name) => (
+              {['Home', 'About', 'Menu', 'Why Us', 'Atmosphere', 'Reviews', 'Gallery', 'Reservation', 'Contact'].map((name) => (
                 <li key={name}>
                   <a
                     href={`#${name.toLowerCase().replace(/\s+/g, '-')}`}

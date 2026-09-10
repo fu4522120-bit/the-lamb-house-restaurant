@@ -9,7 +9,6 @@ import { INITIAL_CATEGORIES, INITIAL_ITEMS, INITIAL_GALLERY } from './data/resta
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { AboutSection } from './components/AboutSection';
-import { SignatureDishes } from './components/SignatureDishes';
 import { WhyUsSection } from './components/WhyUsSection';
 import { MenuSection } from './components/MenuSection';
 import { ShowcaseSection } from './components/ShowcaseSection';
@@ -74,6 +73,13 @@ export default function App() {
           setMenuItems(itemsData);
           localStorage.setItem('lamb_house_items', JSON.stringify(itemsData));
         }
+      } else {
+        const saved = localStorage.getItem('lamb_house_items');
+        if (saved) {
+          try {
+            setMenuItems(JSON.parse(saved));
+          } catch {}
+        }
       }
       if (galRes && galRes.ok) {
         const galData = await galRes.json();
@@ -90,6 +96,32 @@ export default function App() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleAddItem = (newItem: MenuItem) => {
+    setMenuItems((prev) => {
+      const updated = [newItem, ...prev.filter((i) => i.id !== newItem.id)];
+      localStorage.setItem('lamb_house_items', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleDeleteItem = (id: string) => {
+    setMenuItems((prev) => {
+      const updated = prev.filter((i) => i.id !== id);
+      localStorage.setItem('lamb_house_items', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const handleToggleAvailable = (item: MenuItem) => {
+    setMenuItems((prev) => {
+      const updated = prev.map((i) =>
+        i.id === item.id ? { ...i, isAvailable: !i.isAvailable } : i
+      );
+      localStorage.setItem('lamb_house_items', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const handleOrderShowcase = () => {
     const karahi = menuItems.find((m) => m.name.toLowerCase().includes('karahi')) || {
@@ -126,20 +158,20 @@ export default function App() {
       {/* About The Lamb House */}
       <AboutSection />
 
-      {/* Signature Dishes: Mutton Afghani Pulao, Lamb Karahi, Chapli Kabab, Grilled Ribs, Shinwari */}
-      <SignatureDishes
-        items={menuItems}
-        onSelectDish={(dish) => setSelectedDish(dish)}
-      />
-
       {/* Why The Lamb House (4 Standard Cards) */}
       <WhyUsSection />
 
-      {/* Digital Menu Categories & Search */}
+      {/* Unified Digital Menu: Features all dishes, signature specialties, categories, search, and Admin Add Dish */}
       <MenuSection
         categories={categories}
         items={menuItems}
         onSelectDish={(dish) => setSelectedDish(dish)}
+        isAdminLoggedIn={!!adminToken}
+        onOpenAdmin={() => setIsAdminOpen(true)}
+        onAddItem={handleAddItem}
+        onDeleteItem={handleDeleteItem}
+        onToggleAvailable={handleToggleAvailable}
+        onRefreshData={fetchData}
       />
 
       {/* Featured Food Showcase: Lamb Karahi */}

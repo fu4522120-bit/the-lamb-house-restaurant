@@ -1,6 +1,6 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { MenuCategory, MenuItem, Reservation, ContactMessage, GalleryItem, ReservationStatus } from '../types';
-import { getImageUrl, INITIAL_RESERVATIONS } from '../data/restaurantData';
+import { getImageUrl, INITIAL_RESERVATIONS, DISH_IMAGE_PRESETS } from '../data/restaurantData';
 import {
   X,
   Lock,
@@ -205,13 +205,17 @@ export function AdminDashboard({
   const handleToggleAvailable = async (item: MenuItem) => {
     if (!token) return;
     try {
-      const res = await fetch(`/api/menu/items/${item.id}/toggle-available`, {
+      await fetch(`/api/menu/items/${item.id}/toggle-available`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        await onRefreshData();
-      }
+      }).catch(() => null);
+
+      const currentStored: MenuItem[] = JSON.parse(localStorage.getItem('lamb_house_items') || '[]');
+      const updatedList = currentStored.map((i) =>
+        i.id === item.id ? { ...i, isAvailable: !i.isAvailable } : i
+      );
+      localStorage.setItem('lamb_house_items', JSON.stringify(updatedList));
+      await onRefreshData();
     } catch (err) {
       console.error(err);
     }
@@ -220,13 +224,17 @@ export function AdminDashboard({
   const handleToggleFeatured = async (item: MenuItem) => {
     if (!token) return;
     try {
-      const res = await fetch(`/api/menu/items/${item.id}/toggle-featured`, {
+      await fetch(`/api/menu/items/${item.id}/toggle-featured`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        await onRefreshData();
-      }
+      }).catch(() => null);
+
+      const currentStored: MenuItem[] = JSON.parse(localStorage.getItem('lamb_house_items') || '[]');
+      const updatedList = currentStored.map((i) =>
+        i.id === item.id ? { ...i, isFeatured: !i.isFeatured } : i
+      );
+      localStorage.setItem('lamb_house_items', JSON.stringify(updatedList));
+      await onRefreshData();
     } catch (err) {
       console.error(err);
     }
@@ -235,13 +243,15 @@ export function AdminDashboard({
   const handleDeleteItem = async (id: string) => {
     if (!token || !confirm('Are you sure you want to remove this dish?')) return;
     try {
-      const res = await fetch(`/api/menu/items/${id}`, {
+      await fetch(`/api/menu/items/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
-      });
-      if (res.ok) {
-        await onRefreshData();
-      }
+      }).catch(() => null);
+
+      const currentStored: MenuItem[] = JSON.parse(localStorage.getItem('lamb_house_items') || '[]');
+      const updatedList = currentStored.filter((i) => i.id !== id);
+      localStorage.setItem('lamb_house_items', JSON.stringify(updatedList));
+      await onRefreshData();
     } catch (err) {
       console.error(err);
     }
@@ -251,25 +261,60 @@ export function AdminDashboard({
     e.preventDefault();
     if (!token) return;
     try {
+      let savedItem: MenuItem | null = null;
       if (editingItem) {
-        await fetch(`/api/menu/items/${editingItem.id}`, {
+        const res = await fetch(`/api/menu/items/${editingItem.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(itemForm),
-        });
+        }).catch(() => null);
+
+        if (res && res.ok) {
+          savedItem = await res.json();
+        } else {
+          savedItem = {
+            ...editingItem,
+            ...itemForm,
+            updatedAt: new Date().toISOString(),
+          };
+        }
       } else {
-        await fetch('/api/menu/items', {
+        const res = await fetch('/api/menu/items', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(itemForm),
-        });
+        }).catch(() => null);
+
+        if (res && res.ok) {
+          savedItem = await res.json();
+        } else {
+          savedItem = {
+            id: `item-${Date.now()}`,
+            ...itemForm,
+            tags: itemForm.tags || ['Fresh'],
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+        }
       }
+
+      if (savedItem) {
+        const currentStored: MenuItem[] = JSON.parse(localStorage.getItem('lamb_house_items') || '[]');
+        let updatedList: MenuItem[];
+        if (editingItem) {
+          updatedList = currentStored.map((i) => (i.id === editingItem.id ? savedItem! : i));
+        } else {
+          updatedList = [savedItem, ...currentStored.filter((i) => i.id !== savedItem!.id)];
+        }
+        localStorage.setItem('lamb_house_items', JSON.stringify(updatedList));
+      }
+
       setIsItemModalOpen(false);
       setEditingItem(null);
       await onRefreshData();
@@ -955,12 +1000,43 @@ export function AdminDashboard({
               </div>
 
               <div>
-                <label className="font-semibold text-[#ded5c5] block mb-1">Image URL</label>
+                <label className="font-semibold text-[#ded5c5] block mb-1.5 text-xs uppercase tracking-wider">
+                  Select Dish Photo Preset
+                </label>
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mb-2">
+                  {DISH_IMAGE_PRESETS.map((preset) => (
+                    <button
+                      type="button"
+                      key={preset.url}
+                      onClick={() => setItemForm({ ...itemForm, imageUrl: preset.url })}
+                      className={`relative rounded overflow-hidden border aspect-video transition-all ${
+                        itemForm.imageUrl === preset.url
+                          ? 'border-[#c88a38] ring-2 ring-[#c88a38]/50'
+                          : 'border-[#332f2b] opacity-70 hover:opacity-100'
+                      }`}
+                    >
+                      <img
+                        src={getImageUrl(preset.url)}
+                        alt={preset.label}
+                        className="w-full h-full object-cover"
+                        referrerPolicy="no-referrer"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex items-end p-1">
+                        <span className="text-[8px] font-semibold text-white truncate">
+                          {preset.label}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                <label className="font-semibold text-[#ded5c5] block mb-1 text-xs">Custom Image URL</label>
                 <input
                   type="text"
+                  placeholder="Or paste any custom image link"
                   value={itemForm.imageUrl}
                   onChange={(e) => setItemForm({ ...itemForm, imageUrl: e.target.value })}
-                  className="w-full px-3 py-2 rounded bg-[#1e1c1a] border border-[#332f2b] text-white"
+                  className="w-full px-3 py-2 rounded bg-[#1e1c1a] border border-[#332f2b] text-white text-xs"
                 />
               </div>
 
