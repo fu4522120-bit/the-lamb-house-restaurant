@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { GalleryItem } from '../types';
 import { Camera, X, ZoomIn } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
 interface GallerySectionProps {
   items: GalleryItem[];
@@ -72,7 +73,7 @@ export function GallerySection({ items }: GallerySectionProps) {
               className="group relative cursor-pointer overflow-hidden rounded-lg bg-[#151413] border border-[#25221f] hover:border-[#c88a38]/60 transition-all duration-300 aspect-[4/3]"
             >
               <img
-                src={item.imageUrl}
+                src={getImageUrl(item.imageUrl)}
                 alt={item.caption}
                 className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 referrerPolicy="no-referrer"
@@ -116,7 +117,7 @@ export function GallerySection({ items }: GallerySectionProps) {
             </button>
             <div className="relative aspect-[16/10] bg-black">
               <img
-                src={activeLightbox.imageUrl}
+                src={getImageUrl(activeLightbox.imageUrl)}
                 alt={activeLightbox.caption}
                 className="w-full h-full object-contain"
                 referrerPolicy="no-referrer"

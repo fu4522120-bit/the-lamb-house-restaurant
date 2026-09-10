@@ -1,4 +1,5 @@
 import { Users, Moon, Armchair, Sparkles } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
 export function AtmosphereSection() {
   return (
@@ -48,7 +49,7 @@ export function AtmosphereSection() {
           <div className="group rounded-xl overflow-hidden bg-[#131211]/90 border border-[#2b2724] backdrop-blur-sm flex flex-col justify-between">
             <div className="relative h-56 overflow-hidden">
               <img
-                src="/images/restaurant_interior.jpg"
+                src={getImageUrl('/images/restaurant_interior.jpg')}
                 alt="Comfortable indoor family seating at The Lamb House"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 referrerPolicy="no-referrer"

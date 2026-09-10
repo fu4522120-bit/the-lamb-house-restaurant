@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { MenuCategory, MenuItem, GalleryItem } from './types';
+import { INITIAL_CATEGORIES, INITIAL_ITEMS, INITIAL_GALLERY } from './data/restaurantData';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { AboutSection } from './components/AboutSection';
@@ -22,9 +23,30 @@ import { OrderModal } from './components/OrderModal';
 import { AdminDashboard } from './components/AdminDashboard';
 
 export default function App() {
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
-  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
-  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [categories, setCategories] = useState<MenuCategory[]>(() => {
+    const saved = localStorage.getItem('lamb_house_categories');
+    if (saved) {
+      try { return JSON.parse(saved); } catch {}
+    }
+    return INITIAL_CATEGORIES;
+  });
+
+  const [menuItems, setMenuItems] = useState<MenuItem[]>(() => {
+    const saved = localStorage.getItem('lamb_house_items');
+    if (saved) {
+      try { return JSON.parse(saved); } catch {}
+    }
+    return INITIAL_ITEMS;
+  });
+
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>(() => {
+    const saved = localStorage.getItem('lamb_house_gallery');
+    if (saved) {
+      try { return JSON.parse(saved); } catch {}
+    }
+    return INITIAL_GALLERY;
+  });
+
   const [selectedDish, setSelectedDish] = useState<MenuItem | null>(null);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [adminToken, setAdminToken] = useState<string | null>(() => {
@@ -34,25 +56,34 @@ export default function App() {
   const fetchData = async () => {
     try {
       const [catsRes, itemsRes, galRes] = await Promise.all([
-        fetch('/api/menu/categories'),
-        fetch('/api/menu/items'),
-        fetch('/api/gallery'),
+        fetch('/api/menu/categories').catch(() => null),
+        fetch('/api/menu/items').catch(() => null),
+        fetch('/api/gallery').catch(() => null),
       ]);
 
-      if (catsRes.ok) {
+      if (catsRes && catsRes.ok) {
         const catsData = await catsRes.json();
-        setCategories(catsData);
+        if (Array.isArray(catsData) && catsData.length > 0) {
+          setCategories(catsData);
+          localStorage.setItem('lamb_house_categories', JSON.stringify(catsData));
+        }
       }
-      if (itemsRes.ok) {
+      if (itemsRes && itemsRes.ok) {
         const itemsData = await itemsRes.json();
-        setMenuItems(itemsData);
+        if (Array.isArray(itemsData) && itemsData.length > 0) {
+          setMenuItems(itemsData);
+          localStorage.setItem('lamb_house_items', JSON.stringify(itemsData));
+        }
       }
-      if (galRes.ok) {
+      if (galRes && galRes.ok) {
         const galData = await galRes.json();
-        setGalleryItems(galData);
+        if (Array.isArray(galData) && galData.length > 0) {
+          setGalleryItems(galData);
+          localStorage.setItem('lamb_house_gallery', JSON.stringify(galData));
+        }
       }
-    } catch (err) {
-      console.error('Error fetching initial restaurant data:', err);
+    } catch {
+      // In static deployment mode (e.g. GitHub Pages), default data and localStorage are used seamlessly
     }
   };
 

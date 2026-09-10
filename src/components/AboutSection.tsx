@@ -1,4 +1,5 @@
 import { Users, Moon, Flame, HeartHandshake } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
 export function AboutSection() {
   return (
@@ -76,7 +77,7 @@ export function AboutSection() {
           <div className="lg:col-span-5 relative">
             <div className="relative mx-auto rounded-lg overflow-hidden border border-[#2e2a26] shadow-2xl shadow-black">
               <img
-                src="/images/restaurant_interior.jpg"
+                src={getImageUrl('/images/restaurant_interior.jpg')}
                 alt="The Lamb House dining room and welcoming seating in Johar Town Lahore"
                 className="w-full h-[460px] object-cover hover:scale-105 transition-transform duration-700 ease-out"
                 referrerPolicy="no-referrer"

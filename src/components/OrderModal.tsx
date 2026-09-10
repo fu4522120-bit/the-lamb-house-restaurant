@@ -1,5 +1,6 @@
 import { MenuItem } from '../types';
 import { X, Phone, MessageSquare, MapPin, Clock, Calendar } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
 interface OrderModalProps {
   dish: MenuItem | null;
@@ -31,7 +32,7 @@ export function OrderModal({ dish, onClose, onGoToReservation }: OrderModalProps
         {/* Dish Media */}
         <div className="relative aspect-[16/9] bg-[#1a1816]">
           <img
-            src={dish.imageUrl}
+            src={getImageUrl(dish.imageUrl)}
             alt={dish.name}
             className="w-full h-full object-cover"
             referrerPolicy="no-referrer"

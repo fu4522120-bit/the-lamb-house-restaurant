@@ -1,5 +1,6 @@
 import { MenuItem } from '../types';
 import { Flame, Sparkles, MessageSquare } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
 interface SignatureDishesProps {
   items: MenuItem[];
@@ -101,7 +102,7 @@ export function SignatureDishes({ items, onSelectDish }: SignatureDishesProps) {
               {/* Image Container with Consistent Aspect Ratio */}
               <div className="relative aspect-[16/10] overflow-hidden bg-[#1b1917]">
                 <img
-                  src={dish.imageUrl}
+                  src={getImageUrl(dish.imageUrl)}
                   alt={`${dish.name} - The Lamb House Lahore`}
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-108"
                   referrerPolicy="no-referrer"

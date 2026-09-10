@@ -1,4 +1,5 @@
 import { Flame, Phone, MessageSquare, CheckCircle2 } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
 interface ShowcaseSectionProps {
   onOrderClick: () => void;
@@ -17,7 +18,7 @@ export function ShowcaseSection({ onOrderClick }: ShowcaseSectionProps) {
           <div className="lg:col-span-7 relative group">
             <div className="relative rounded-xl overflow-hidden border border-[#332f2b] shadow-2xl shadow-black">
               <img
-                src="/images/lamb_karahi.jpg"
+                src={getImageUrl('/images/lamb_karahi.jpg')}
                 alt="Authentic Pakistani Lamb Karahi bubbling in black iron wok at The Lamb House"
                 className="w-full h-[480px] object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
                 referrerPolicy="no-referrer"

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { MenuCategory, MenuItem } from '../types';
 import { Search, Utensils, MessageSquare, AlertCircle } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
 interface MenuSectionProps {
   categories: MenuCategory[];
@@ -132,7 +133,7 @@ export function MenuSection({ categories, items, onSelectDish }: MenuSectionProp
                 {/* Image */}
                 <div className="relative aspect-[16/10] overflow-hidden bg-[#1a1816]">
                   <img
-                    src={item.imageUrl}
+                    src={getImageUrl(item.imageUrl)}
                     alt={`${item.name} at The Lamb House`}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"

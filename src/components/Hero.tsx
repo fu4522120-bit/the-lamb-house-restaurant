@@ -1,7 +1,8 @@
 import { motion } from 'motion/react';
 import { Compass, UtensilsCrossed, MapPin, Clock, Star } from 'lucide-react';
+import { getImageUrl } from '../data/restaurantData';
 
-export function Hero() {
+export function Hero({ onOpenReserve }: { onOpenReserve?: () => void }) {
   return (
     <section
       id="home"
@@ -10,7 +11,7 @@ export function Hero() {
       {/* Background Image with subtle cinematic overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="/images/hero_afghani_pulao.jpg"
+          src={getImageUrl('/images/hero_afghani_pulao.jpg')}
           alt="Authentic Pakistani Mutton Afghani Pulao at The Lamb House Johar Town"
           className="w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
           referrerPolicy="no-referrer"
